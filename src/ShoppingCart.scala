@@ -6,9 +6,11 @@ object ShoppingCart:
     case BuyOneGetOneFree extends MultiplesOffer(2, 1) // same as 2 for the price of 1
     case ThreeForThePriceOfTwo extends MultiplesOffer(3, 2)
 
+  import MultiplesOffer._
+
   enum Product(val price: BigDecimal, val maybeOffer: Option[MultiplesOffer]):
-    case Apple extends Product(BigDecimal(0.60), None)
-    case Orange extends Product(BigDecimal(0.25), None)
+    case Apple extends Product(BigDecimal(0.60), Some(BuyOneGetOneFree))
+    case Orange extends Product(BigDecimal(0.25), Some(ThreeForThePriceOfTwo))
 
   case class ReceiptItem(subtotal: BigDecimal, description: String)
 
@@ -25,7 +27,9 @@ object ShoppingCart:
 
   def subtotalForQuantity(price: BigDecimal, quantity: Int, maybeOffer: Option[MultiplesOffer]): BigDecimal =
     maybeOffer.map { offer =>
-      ???
+      val nofMultiples = quantity / offer.multipleSize
+      val remainder = quantity % offer.multipleSize
+      ((nofMultiples * offer.forPriceOf) + remainder) * price
     }.getOrElse(price * quantity)
 
   def generateReceipt(productStrings: Array[String]): String =
