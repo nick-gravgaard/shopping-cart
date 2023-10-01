@@ -4,10 +4,12 @@ import ShoppingCart.MultiplesOffer.*
 import ShoppingCart.Product.*
 
 class ShoppingCartSpec extends FunSuite:
-  test("productsByName"):
-    val obtained = productsByName(List("apple", "banana", "Apple", "orange", "APPLE"))
-    val expected = List(Apple, Apple, Orange, Apple)
-    assertEquals(obtained, expected)
+  test("productByName"):
+    assertEquals(productByName("apple"), Some(Apple))
+    assertEquals(productByName("Apple"), Some(Apple))
+    assertEquals(productByName("APPLE"), Some(Apple))
+    assertEquals(productByName("orange"), Some(Orange))
+    assertEquals(productByName("banana"), None)
 
   test("subtotalForQuantity"):
     test("no offer"):
