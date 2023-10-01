@@ -1,9 +1,16 @@
 import scala.util.Try
 
 object ShoppingCart:
-  enum Product(val price: BigDecimal):
-    case Apple extends Product(BigDecimal(0.60))
-    case Orange extends Product(BigDecimal(0.25))
+
+  enum MultiplesOffer(val multipleSize: Int, val forPriceOf: Int):
+    case BuyOneGetOneFree extends MultiplesOffer(2, 1) // same as 2 for the price of 1
+    case ThreeForThePriceOfTwo extends MultiplesOffer(3, 2)
+
+  enum Product(val price: BigDecimal, val maybeOffer: Option[MultiplesOffer]):
+    case Apple extends Product(BigDecimal(0.60), None)
+    case Orange extends Product(BigDecimal(0.25), None)
+
+  case class ReceiptItem(subtotal: BigDecimal, description: String)
 
   def main(args: Array[String]): Unit =
     println(generateReceipt(args))
@@ -16,10 +23,10 @@ object ShoppingCart:
       }
       .flatten
 
-  def sumPrices(products: List[Product]): BigDecimal =
-    products
-      .map(_.price)
-      .sum
+  def subtotalForQuantity(price: BigDecimal, quantity: Int, maybeOffer: Option[MultiplesOffer]): BigDecimal =
+    maybeOffer.map { offer =>
+      ???
+    }.getOrElse(price * quantity)
 
   def generateReceipt(productStrings: Array[String]): String =
     val products = productsByName(productStrings.toList)
@@ -27,10 +34,10 @@ object ShoppingCart:
     val productLines =
       productQuantities
         .map { (product, quantity) =>
-          val subtotal = product.price * quantity
+          val subtotal = subtotalForQuantity(product.price, quantity, product.maybeOffer)
           val quantityAndProduct = s"$quantity $product"
-          f"$quantityAndProduct%-11s £$subtotal%4.2f"
+          ReceiptItem(subtotal, f"$quantityAndProduct%-11s £$subtotal%4.2f")
         }
-    val totalCost = sumPrices(products)
-    val allLines = productLines :+ f"Total cost  £$totalCost%4.2f"
+    val totalCost = productLines.map(_.subtotal).sum
+    val allLines = productLines.map(_.description) :+ f"Total cost  £$totalCost%4.2f"
     allLines.mkString("\n")

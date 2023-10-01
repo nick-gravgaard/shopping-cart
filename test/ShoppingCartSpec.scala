@@ -8,10 +8,11 @@ class ShoppingCartSpec extends FunSuite:
     val expected = List(Apple, Apple, Orange, Apple)
     assertEquals(obtained, expected)
 
-  test("sumPrices"):
-    val obtained = sumPrices(List(Apple, Apple, Orange, Apple))
-    val expected = BigDecimal(2.05)
-    assertEquals(obtained, expected)
+  test("subtotalForQuantity"):
+    test("no offer"):
+      val obtained = subtotalForQuantity(BigDecimal(11), 7, None)
+      val expected = BigDecimal(77)
+      assertEquals(obtained, expected)
 
   test("generateReceipt"):
     val obtained = generateReceipt(Array("apple", "apple", "orange", "apple"))
