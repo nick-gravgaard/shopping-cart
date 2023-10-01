@@ -6,5 +6,11 @@ object ShoppingCart:
   def main(args: Array[String]): Unit =
     println(generateReceipt(args))
 
-  def generateReceipt(args: Array[String]): String =
+  def productsByName(productNames: List[String]): List[Product] =
+    ???
+
+  def sumPrices(products: List[Product]): BigDecimal =
+    ???
+
+  def generateReceipt(productStrings: Array[String]): String =
     ???
